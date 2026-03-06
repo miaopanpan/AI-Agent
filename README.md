@@ -32,7 +32,13 @@ AI-Agent/
 ## 安装依赖
 
 ```bash
-pip install fastapi uvicorn pydantic openai
+pip install -r requirements.txt
+```
+
+或者手动安装：
+
+```bash
+pip install fastapi uvicorn pydantic openai python-dotenv
 ```
 
 ## 配置
