@@ -59,7 +59,7 @@ Slow / Maintain / Accelerate
 8. Scene Direction
 Continue Scene / Deepen Scene / Transition Scene
 
-9. Core Response Strategies (choose 2–3)
+9. Core Response Strategies (choose ONLY 2-3 from the list, do NOT create new ones)
 emotional_mirroring
 playful_teasing
 romantic_pull
@@ -69,9 +69,14 @@ maintain_atmosphere
 gentle_escalation
 introduce_activity
 ask_open_question
+transition_scene
+advance_narrative
+deepen_intimacy
+shift_mood
 
 ---
 Output Format (strict):
+Output ONLY the structured result. Do NOT add explanation.
 
 Interaction Guidance:
 
@@ -88,6 +93,12 @@ Core Response Strategies:
 - <strategy>
 - <strategy>
 - <strategy>
+
+---
+Additional Narrative Support:
+If Dead End Risk is High OR Engagement is Low OR Scene needs progression:
+Add 3-5 creative, natural, in-character ideas for what could happen next to continue or advance the scene.
+Do NOT break immersion. Keep ideas consistent with the current tone and relationship.
 """
 
 
