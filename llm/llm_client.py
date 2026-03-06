@@ -29,7 +29,7 @@ def call_llm_with_tools(messages, tools):
             tool_choice="auto"  # 让模型自动决定是否调用工具
         )
 
-        print("LLM Response:", response.choices[0].message)
+        # print("LLM Response:", response.choices[0].message)
         return response.choices[0].message
         
     except Exception as e:

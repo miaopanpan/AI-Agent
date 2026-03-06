@@ -2,7 +2,7 @@
 
 import json
 from llm.llm_client import call_llm_with_tools
-from tools.dynamic_prompt import generate_dynamic_prompt
+from tools.dynamic_prompt import generate_interaction_guidance
 
 
 class LLMToolSelectorMiddleware:
@@ -27,7 +27,7 @@ class LLMToolSelectorMiddleware:
                     "messages": chat_history
                 }
 
-                dynamic_prompt = generate_dynamic_prompt(agent_input)
+                dynamic_prompt = generate_interaction_guidance(agent_input)
 
                 # 如果 AI 生成了完整 system prompt
                 if dynamic_prompt:

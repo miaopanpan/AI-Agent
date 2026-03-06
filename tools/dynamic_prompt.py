@@ -5,54 +5,98 @@ from llm.llm_client import call_llm_with_tools
 
 
 EMOTIONAL_STRATEGIST_PROMPT = """
-You are the Emotional Progression & Intent Strategist in a role-playing chat system.
+You are an interaction and narrative guidance analyzer.
 
-Your responsibility is not only to analyze user intent, but to determine:
+Your role is to analyze the user's latest message and recent conversation context, then generate concise guidance that will help the assistant produce a more emotionally coherent and engaging response.
 
-- Relationship progression stage
-- Emotional intensity level
-- Desire escalation speed
-- Scene transition readiness
-- Whether to satisfy, delay, redirect, or deepen
+The assistant in the next step acts as a narrative facilitator who guides story participants through natural emotional progression, character motivations, and scene development. The assistant should maintain immersion while allowing space for creative interpretation and emotional flow.
 
-Your goal is to protect narrative rhythm, maintain immersion, and optimize emotional payoff pacing.
+Your task is NOT to generate the reply itself.  
+Your task is to produce **Interaction Guidance** that will be inserted into the assistant's next prompt.
 
-Never create abrupt progression.
-Never shut down user enthusiasm.
-Never escalate without emotional groundwork.
+------------------------------------------------
 
-Core Evaluation Framework
+# Analysis Objectives
 
-1️⃣ Intent Classification
-2️⃣ Emotional State & Intensity Level (0-5 Scale)
-3️⃣ Relationship Stage Detection (1-5)
-4️⃣ Escalation Decision Logic
-5️⃣ Scene Transition Check
+Analyze the user's latest message and the last 3–5 conversation turns to determine:
 
-Output Format (STRICT):
-Role response direction: ...
-Points to focus on: ...
-"""
+1. The user's **emotional stage**
+2. The user's **engagement level**
+3. The appropriate **response pacing**
+4. Whether the conversation should **continue, deepen, or transition scenes**
+5. The most suitable **response strategies**
 
+------------------------------------------------
 
-PROMPT_ENGINEER_TEMPLATE = """
-As an AI prompting engineer, generate a new dynamic system prompt
-based on the chat logs and role data below
-to improve future chat interactions.
+# Emotional Stage Identification
 
-Return ONLY the generated prompt.
+Exploration  
+Engagement  
+Escalation  
+Satisfaction  
 
-Character Data:
-{character_data}
+------------------------------------------------
 
-Chat Logs:
-{chat_logs}
+# Engagement Level
+
+Low  
+Medium  
+High  
+Very High  
+
+------------------------------------------------
+
+# Pace Control
+
+Slow  
+Maintain  
+Accelerate  
+
+------------------------------------------------
+
+# Scene Direction
+
+Continue Scene  
+Deepen Scene  
+Transition Scene  
+
+------------------------------------------------
+
+# Response Strategy Selection
+
+Choose **1–2 strategies**:
+
+emotional_mirroring  
+ask_open_question  
+maintain_atmosphere  
+gentle_escalation  
+intensify_emotion  
+slow_down_pacing  
+suggest_scene_transition  
+
+------------------------------------------------
+
+# Output Format
+
+Interaction Guidance:
+
+Emotional Stage: <Exploration / Engagement / Escalation / Satisfaction>
+
+User Engagement Level: <Low / Medium / High / Very High>
+
+Pacing Guidance: <Slow / Maintain / Accelerate>
+
+Scene Direction: <Continue Scene / Deepen Scene / Transition Scene>
+
+Core Response Strategies:
+- <strategy>
+- <strategy>
 """
 
 
 def call_llm_simple(system_prompt: str, user_prompt: str, temperature: float = 0.3):
     """
-    简单封装一个不带tools的LLM调用
+    简单封装一个不带 tools 的 LLM 调用
     """
 
     messages = [
@@ -68,30 +112,10 @@ def call_llm_simple(system_prompt: str, user_prompt: str, temperature: float = 0
     return ""
 
 
-def should_generate_new_prompt(strategy_output: str) -> bool:
-    strategy_output = strategy_output.lower()
-
-    print("Emotional Strategist Output:", strategy_output)
-    trigger_keywords = [
-        "stabilize",
-        "redirect",
-        "slow",
-        "challenge",
-        "deep",
-        "escalation exceeded",
-        "slow escalation",
-        "delay"
-    ]
-
-    return any(keyword in strategy_output for keyword in trigger_keywords)
-
-
-def generate_dynamic_prompt(data: Dict[str, Any]) -> str | None:
+def generate_interaction_guidance(data: Dict[str, Any]) -> str:
     """
-    主流程：
-    1. 调用情绪策略判断
-    2. 判断是否需要生成新prompt
-    3. 如果需要 → 生成并返回
+    只生成 Interaction Guidance
+    用于直接插入聊天 Prompt
     """
 
     strategist_input = f"""
@@ -100,35 +124,14 @@ Character:
 {data['character_bio']}
 {data['description']}
 
-Conversation:
+Recent Conversation:
 {data['messages']}
 """
 
-    # Step 1 — 情绪节奏判断
     strategist_result = call_llm_simple(
         system_prompt=EMOTIONAL_STRATEGIST_PROMPT,
         user_prompt=strategist_input,
         temperature=0.2
     )
 
-    # Step 2 — 判断是否触发动态提示词生成
-    if not should_generate_new_prompt(strategist_result):
-        return None
-
-    # Step 3 — 生成新的动态提示词
-    prompt_engineer_input = PROMPT_ENGINEER_TEMPLATE.format(
-        character_data=f"""
-Name: {data['character_name']}
-Bio: {data['character_bio']}
-Description: {data['description']}
-""",
-        chat_logs=data['messages']
-    )
-
-    new_prompt = call_llm_simple(
-        system_prompt="You are a professional AI prompt engineer.",
-        user_prompt=prompt_engineer_input,
-        temperature=0.4
-    )
-
-    return new_prompt
+    return strategist_result or ""

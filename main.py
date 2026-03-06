@@ -7,7 +7,7 @@ from tools.text_to_image import TextToImageTool
 from tools.weather import WeatherTool
 from tools.text_to_video import TextToVideoTool
 from middleware.tool_selector import LLMToolSelectorMiddleware
-from tools.dynamic_prompt import generate_dynamic_prompt
+from tools.dynamic_prompt import generate_interaction_guidance
 
 app = FastAPI()
 
@@ -98,26 +98,21 @@ async def chat(request: ChatRequest):
                 "messages": request.chat_history
             }
 
-            dynamic_prompt = generate_dynamic_prompt(agent_input)
-        # else:
-        result = middleware.run(
-            request.message
-        # system_prompt_override=dynamic_prompt
-        )
+            dynamic_prompt = generate_interaction_guidance(agent_input)
+            print(f"生成的动态提示词: {dynamic_prompt}")
 
         # ==============================
-        # Step 2: 决定是否调用 LLM 回复
+        # Step 2: 调用主处理流程
         # ==============================
-        # 如果只是为了更新 dynamic prompt，则不生成 message
-        # 可以根据请求参数增加一个标志，比如 request.only_dynamic_prompt
-        # only_dynamic_prompt = getattr(request, "only_dynamic_prompt", False)
-
-        # if not only_dynamic_prompt and dynamic_prompt:
-            # 需要生成消息的情况才调用 middleware
+        # if dynamic_prompt:
+            # print("=== 使用动态提示词调用 middleware ===")
             # result = middleware.run(
-            #     request.message
+            #     request.message,
             #     # system_prompt_override=dynamic_prompt
             # )
+        # else:
+            # print("=== 使用默认提示词调用 middleware ===")
+            # result = middleware.run(request.message)
 
         return ChatResponse(
             message=result,  # 如果不生成消息则为 None
