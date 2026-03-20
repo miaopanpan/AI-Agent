@@ -6,6 +6,7 @@ from typing import Dict, Any, Optional
 from tools.text_to_image import TextToImageTool
 from tools.weather import WeatherTool
 from tools.text_to_video import TextToVideoTool
+from tools.realtime_news import RealtimeNewsTool
 from middleware.tool_selector import LLMToolSelectorMiddleware
 from tools.dynamic_prompt import generate_interaction_guidance
 
@@ -28,7 +29,8 @@ class ChatResponse(BaseModel):
 tools = [
     TextToImageTool(),
     WeatherTool(),
-    TextToVideoTool()
+    TextToVideoTool(),
+    RealtimeNewsTool()
 ]
 
 middleware = LLMToolSelectorMiddleware(tools)
@@ -104,15 +106,15 @@ async def chat(request: ChatRequest):
         # ==============================
         # Step 2: 调用主处理流程
         # ==============================
-        # if dynamic_prompt:
-            # print("=== 使用动态提示词调用 middleware ===")
-            # result = middleware.run(
-            #     request.message,
-            #     # system_prompt_override=dynamic_prompt
-            # )
-        # else:
-            # print("=== 使用默认提示词调用 middleware ===")
-            # result = middleware.run(request.message)
+        if dynamic_prompt:
+            print("=== 使用动态提示词调用 middleware ===")
+            result = middleware.run(
+                request.message,
+                # system_prompt_override=dynamic_prompt
+            )
+        else:
+            print("=== 使用默认提示词调用 middleware ===")
+            result = middleware.run(request.message)
 
         return ChatResponse(
             message=result,  # 如果不生成消息则为 None

@@ -29,8 +29,10 @@ class TextToVideoTool(BaseTool):
         }
 
     def run(self, prompt: str, duration: int = 10):
+        print(f"【工具调用】text_to_video，提示: {prompt}，时长: {duration}秒")
         return {
             "tool": self.name,
+            "task_id": "task_67890",
             "video_url": f"https://fake-video/{prompt}.mp4",
             "duration": duration
         }

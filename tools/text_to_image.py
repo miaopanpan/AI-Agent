@@ -28,7 +28,10 @@ class TextToImageTool(BaseTool):
         }
 
     def run(self, prompt: str):
+        print(f"【工具调用】text_to_image，提示: {prompt}")
         return {
             "tool": self.name,
-            "image_url": f"https://fake-image/{prompt}.png"
+            "message": "告知用户现在正在生成图片",
+            "task_id": "task_12345",
+            # "image_url": f"https://fake-image/{prompt}.png"
         }

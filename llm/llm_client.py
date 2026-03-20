@@ -41,3 +41,30 @@ def call_llm_with_tools(messages, tools):
                 self.tool_calls = None
         
         return MockMessage()
+
+
+def call_llm(messages):
+    """
+    调用LLM（不带工具）
+    
+    Args:
+        messages: 消息列表
+        
+    Returns:
+        response.choices[0].message: LLM响应消息
+    """
+    try:
+        response = client.chat.completions.create(
+            model=OPENROUTER_MODEL_NAME,
+            messages=messages
+        )
+
+        return response.choices[0].message
+        
+    except Exception as e:
+        print(f"LLM调用错误: {e}")
+        class MockMessage:
+            def __init__(self):
+                self.content = "抱歉，我现在无法处理您的请求。"
+        
+        return MockMessage()
